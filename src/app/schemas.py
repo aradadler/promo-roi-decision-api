@@ -24,3 +24,14 @@ class PromoResponse(BaseModel):
 class RecommendResponse(PromoResponse):
     decision: str
     rationale: str
+
+class CompareRequest(BaseModel):
+    scenario_a: PromoRequest
+    scenario_b: PromoRequest
+
+
+class CompareResponse(BaseModel):
+    scenario_a: PromoResponse
+    scenario_b: PromoResponse
+    better_scenario: str
+    comparison_basis: str

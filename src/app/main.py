@@ -2,7 +2,13 @@ from fastapi import FastAPI
 from app.fred import fetch_latest_cpi
 
 from app.roi import PromoInputs, calculate_promo_roi
-from app.schemas import PromoRequest, PromoResponse, RecommendResponse
+from app.schemas import (
+    PromoRequest,
+    PromoResponse,
+    RecommendResponse,
+    CompareRequest,
+    CompareResponse,
+)
 
 app = FastAPI(title="Promo ROI Decision API", version="0.1.0")
 
@@ -54,3 +60,28 @@ async def recommend(req: PromoRequest):
     "rationale": rationale,
     "market_context": market_context,
     }
+
+@app.post("/compare", response_model=CompareResponse)
+def compare(req: CompareRequest):
+    result_a = calculate_promo_roi(PromoInputs(**req.scenario_a.model_dump()))
+    result_b = calculate_promo_roi(PromoInputs(**req.scenario_b.model_dump()))
+
+    rounded_a = PromoResponse(**round_financials(result_a.__dict__))
+    rounded_b = PromoResponse(**round_financials(result_b.__dict__))
+
+    if rounded_a.incremental_profit > rounded_b.incremental_profit:
+        better_scenario = "A"
+        comparison_basis = "Scenario A has higher incremental profit."
+    elif rounded_b.incremental_profit > rounded_a.incremental_profit:
+        better_scenario = "B"
+        comparison_basis = "Scenario B has higher incremental profit."
+    else:
+        better_scenario = "TIE"
+        comparison_basis = "Both scenarios have the same incremental profit."
+
+    return CompareResponse(
+        scenario_a=rounded_a,
+        scenario_b=rounded_b,
+        better_scenario=better_scenario,
+        comparison_basis=comparison_basis,
+    )
