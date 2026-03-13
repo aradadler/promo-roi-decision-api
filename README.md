@@ -23,15 +23,16 @@ This project demonstrates how structured financial modeling and macro context ca
 
 Given promotion assumptions (price, discount, uplift, cannibalization, COGS), the API:
 
-- **Computes** baseline revenue and profit  
-- **Computes** promotional revenue and profit  
-- **Calculates** incremental profit and ROI  
-- **Determines** break-even uplift  
+- **Computes** baseline revenue and profit
+- **Computes** promotional revenue and profit
+- **Calculates** incremental profit and ROI
+- **Determines** break-even uplift
 - **Generates** a recommendation:
   - **GO**
   - **NO-GO**
   - **REVIEW**
 - **Enriches** the output with real-time CPI data (FRED)
+- **Compares** two promotion scenarios side-by-side to determine the stronger strategy
 
 ## Why CPI integration?
 
@@ -46,25 +47,51 @@ While CPI does not yet modify the ROI math directly, the system integrates macro
 
 Future enhancements could:
 
-- **Adjust COGS** dynamically based on CPI trends  
-- **Modify uplift expectations** under inflationary pressure  
+- **Adjust COGS** dynamically based on CPI trends
+- **Modify uplift expectations** under inflationary pressure
 - **Introduce macro-adjusted ROI thresholds**
 
 This reflects how promotion decisions should evolve from isolated spreadsheet math to macro-aware decision systems.
 
 ## Architecture
 
-Client  
-↓  
-FastAPI layer  
-↓  
-ROI financial engine  
-↓  
-Decision logic layer  
-↓  
-External macro integration (FRED CPI)  
-↓  
+```text
+Client
+  ↓
+FastAPI layer
+  ↓
+ROI financial engine
+  ↓
+Decision logic layer
+  ↓
+External macro integration (FRED CPI)
+  ↓
 Structured JSON response
+```
+
+## API endpoints
+
+### `POST /simulate`
+
+Returns financial metrics for a single promotion scenario.
+
+### `POST /recommend`
+
+Returns:
+
+- financial metrics
+- decision (GO / NO-GO / REVIEW)
+- rationale
+- macroeconomic context (latest CPI)
+
+### `POST /compare`
+
+Compares two promotion scenarios and returns:
+
+- financial results for **Scenario A**
+- financial results for **Scenario B**
+- the **better scenario based on incremental profit**
+- a short comparison rationale
 
 ## Example output
 
@@ -113,7 +140,6 @@ uv run pytest -q
 
 - **Inflation-adjusted COGS modeling**
 - **Sensitivity analysis endpoint**
-- **Scenario comparison endpoint**
 - **Elasticity modeling**
 - **Monte Carlo simulation**
 - **Cloud deployment**
@@ -126,4 +152,3 @@ uv run pytest -q
 - **Macro-data integration**
 - **Reproducible engineering practices**
 - **Product-oriented system thinking**
-
