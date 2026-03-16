@@ -152,3 +152,5 @@ uv run pytest -q
 - **Macro-data integration**
 - **Reproducible engineering practices**
 - **Product-oriented system thinking**
+
+Verified setup on new Apple Silicon laptop using Conda environment.
